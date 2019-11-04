@@ -1,22 +1,33 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+// import { View, Text, Button } from 'react-native';
 import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+// import { createStackNavigator } from 'react-navigation-stack';
+import RootStack from './modules/Screens';
 
-class HomeScreen extends React.PureComponent {
+
+const AppContainer = createAppContainer(RootStack);
+
+export default class App extends React.Component {
+  constructor() {
+    super();
+    this.state = {
+      clothTypes: [
+        { id: 1, type: 't-shirt' },
+        { id: 2, type: 'skirt' },
+      ],
+    };
+  }
+
+  addNewCloth() {
+    const { clothTypes } = this.state;
+
+    clothTypes.push({
+      id: clothTypes.length + 1,
+      type: 'cloth',
+    });
+  }
+
   render() {
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Home Screen</Text>
-      </View>
-    );
+    return <AppContainer />;
   }
 }
-
-const AppNavigator = createStackNavigator({
-  Home: {
-    screen: HomeScreen,
-  },
-});
-
-export default createAppContainer(AppNavigator);
