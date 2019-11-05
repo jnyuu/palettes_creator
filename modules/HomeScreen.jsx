@@ -17,7 +17,6 @@ class HomeScreen extends React.PureComponent {
 }
 HomeScreen.propTypes = {
   navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired }).isRequired,
-
 };
 
 

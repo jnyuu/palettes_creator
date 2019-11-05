@@ -7,8 +7,6 @@ import PropTypes from 'prop-types';
 class ColorPicker extends React.PureComponent {
   render() {
     const { selectedColor } = this.props;
-
-
     return (
       <View style={{
         height: 50, width: 50, backgroundColor: selectedColor, alignItems: 'flex-start',
@@ -16,7 +14,6 @@ class ColorPicker extends React.PureComponent {
       >
         <Text>{selectedColor}</Text>
       </View>
-
     );
   }
 }
