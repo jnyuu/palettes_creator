@@ -10,10 +10,6 @@ class ClothPicker extends React.Component {
     super();
     this.state = {
       colors: [
-        { title: 'red' },
-        { title: 'green' },
-        { title: 'yellow' },
-        { title: 'blue' },
       ],
     };
     this.addColor = this.addColor.bind(this);
@@ -32,7 +28,7 @@ class ClothPicker extends React.Component {
 
   render() {
     const {
-      setCloth, selectedCloth,
+      setCloth, selectedCloth, index,
     } = this.props;
     const { colors } = this.state;
     return (
@@ -44,7 +40,7 @@ class ClothPicker extends React.Component {
             style={{
               height: 50, width: '100%', backgroundColor: 'grey', alignItems: 'flex-start',
             }}
-            onValueChange={(value) => setCloth(value)}
+            onValueChange={(value) => setCloth(value, index)}
             itemStyle={{ height: 100, width: '100%', backgroundColor: 'grey' }}
           >
             <Picker.Item label="T-shirt" value="tshirt" />
@@ -75,6 +71,7 @@ class ClothPicker extends React.Component {
 ClothPicker.propTypes = {
   setCloth: PropTypes.func.isRequired,
   selectedCloth: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 export default ClothPicker;

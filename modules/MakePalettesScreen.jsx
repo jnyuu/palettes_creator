@@ -10,24 +10,18 @@ class MakePalettesScreen extends React.Component {
     super(props);
     this.state = {
       clothes: [
-        {
-          type: 'tshirt',
-          colors: [{
 
-          }],
-        },
-        { type: 'shoes' },
-        { type: 'pants' },
-        { type: 'skirt' },
       ],
     };
     this.setCloth = this.setCloth.bind(this);
     this.addCloth = this.addCloth.bind(this);
+    this.convertSet = this.convertSet.bind(this);
   }
 
-  setCloth(value) {
-    let { clothes } = this.state;
-    clothes = { type: value };
+  setCloth(value, index) {
+    const { clothes } = this.state;
+
+    clothes[index] = { type: value };
 
     this.setState({
       clothes,
@@ -44,6 +38,10 @@ class MakePalettesScreen extends React.Component {
     this.setState({
       clothes,
     });
+  }
+
+  convertSet() {
+    console.log(this.state);
   }
 
   render() {
@@ -87,7 +85,7 @@ class MakePalettesScreen extends React.Component {
         }}
         >
           <View style={{ width: 100 }}><Button title="Go Back" onPress={() => navigation.goBack()} /></View>
-          <View style={{ width: 100 }}><Button title="Add" onPress={() => navigation.goBack()} /></View>
+          <View style={{ width: 100 }}><Button title="Add" onPress={this.convertSet} /></View>
         </View>
       </View>
     );
