@@ -5,32 +5,11 @@ import {
 import PropTypes from 'prop-types';
 import ColorPicker from './ColorPicker';
 
-class ClothPicker extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      colors: [
-      ],
-    };
-    this.addColor = this.addColor.bind(this);
-  }
-
-  addColor() {
-    const { colors } = this.state;
-    colors.push({
-
-      title: `newcolor ${colors.length + 1}`,
-    });
-    this.setState({
-      colors,
-    });
-  }
-
+class ClothPicker extends React.PureComponent {
   render() {
     const {
-      setCloth, selectedCloth, index,
+      setCloth, selectedCloth, index, addColor, colors,
     } = this.props;
-    const { colors } = this.state;
     return (
       <View style={{ flexDirection: 'row', width: '100%' }}>
         <View style={{ width: '36%' }}>
@@ -56,11 +35,10 @@ class ClothPicker extends React.Component {
           keyExtractor={(item, itemIndex) => itemIndex.toString()}
           renderItem={({ item }) => (
             <ColorPicker
-              selectedColor={item.title}
+              selectedColor={item}
             />
-
           )}
-          ListFooterComponent={<View style={{ height: 40, width: 60 }}><Button title="Add color" onPress={this.addColor} color="#7a5f15" /></View>}
+          ListFooterComponent={<View style={{ height: 40, width: 60 }}><Button title="Add color" onPress={() => addColor(index)} color="#7a5f15" /></View>}
         />
 
         {/* this.addColor a nie addColor() żeby nie wywołało się to przy starcie progarmu */}
@@ -71,7 +49,9 @@ class ClothPicker extends React.Component {
 ClothPicker.propTypes = {
   setCloth: PropTypes.func.isRequired,
   selectedCloth: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
+  index: PropTypes.string.isRequired,
+  addColor: PropTypes.func.isRequired,
+  colors: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 };
 
 export default ClothPicker;

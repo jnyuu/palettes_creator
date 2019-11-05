@@ -16,13 +16,23 @@ class MakePalettesScreen extends React.Component {
     this.setCloth = this.setCloth.bind(this);
     this.addCloth = this.addCloth.bind(this);
     this.convertSet = this.convertSet.bind(this);
+    this.addColor = this.addColor.bind(this);
   }
 
   setCloth(value, index) {
     const { clothes } = this.state;
 
-    clothes[index] = { type: value };
+    clothes[index] = { type: value, colors: clothes[index].colors };
 
+    this.setState({
+      clothes,
+    });
+  }
+
+
+  addColor(index) {
+    const { clothes } = this.state;
+    clothes[index].colors.push(`newcolor ${clothes[index].colors.length + 1}`);
     this.setState({
       clothes,
     });
@@ -30,9 +40,12 @@ class MakePalettesScreen extends React.Component {
 
   addCloth() {
     const { clothes } = this.state;
-
+    console.log(clothes === this.state.clothes);
+    console.log(clothes === []);
+    console.log(clothes);
     clothes.push({
       type: 'tshirt',
+      colors: [],
     });
 
     this.setState({
@@ -66,9 +79,11 @@ class MakePalettesScreen extends React.Component {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <ClothPicker
+                colors={item.colors}
                 index={index}
                 setCloth={this.setCloth}
                 selectedCloth={item.type}
+                addColor={this.addColor}
               />
             )}
             ListFooterComponent={<Button title="Add Cloth" onPress={this.addCloth} color="#975f35" />}
