@@ -10,19 +10,24 @@ class MakePalettesScreen extends React.Component {
     super(props);
     this.state = {
       clothes: [
-        { id: 1, type: 'tshirt' },
-        { id: 2, type: 'shoes' },
-        { id: 3, type: 'pants' },
-        { id: 4, type: 'skirt' },
+        {
+          type: 'tshirt',
+          colors: [{
+
+          }],
+        },
+        { type: 'shoes' },
+        { type: 'pants' },
+        { type: 'skirt' },
       ],
     };
     this.setCloth = this.setCloth.bind(this);
     this.addCloth = this.addCloth.bind(this);
   }
 
-  setCloth(value, index) {
-    const { clothes } = this.state;
-    clothes[index] = { id: index, type: value };
+  setCloth(value) {
+    let { clothes } = this.state;
+    clothes = { type: value };
 
     this.setState({
       clothes,
@@ -33,7 +38,6 @@ class MakePalettesScreen extends React.Component {
     const { clothes } = this.state;
 
     clothes.push({
-      id: clothes.length + 1,
       type: 'tshirt',
     });
 
@@ -61,7 +65,7 @@ class MakePalettesScreen extends React.Component {
           <FlatList
             data={clothes}
             extraData={this.state}
-            keyExtractor={(item, index) => index.toString()} // item.id.toString()
+            keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <ClothPicker
                 index={index}
@@ -69,8 +73,9 @@ class MakePalettesScreen extends React.Component {
                 selectedCloth={item.type}
               />
             )}
+            ListFooterComponent={<Button title="Add Cloth" onPress={this.addCloth} color="#975f35" />}
           />
-          <Button title="Add Cloth" onPress={this.addCloth} color="#975f35" />
+
         </View>
         <View style={{
           flexDirection: 'row',

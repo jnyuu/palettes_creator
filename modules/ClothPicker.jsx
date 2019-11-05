@@ -10,10 +10,10 @@ class ClothPicker extends React.Component {
     super();
     this.state = {
       colors: [
-        { id: 1, title: 'red' },
-        { id: 2, title: 'green' },
-        { id: 3, title: 'yellow' },
-        { id: 4, title: 'blue' },
+        { title: 'red' },
+        { title: 'green' },
+        { title: 'yellow' },
+        { title: 'blue' },
       ],
     };
     this.addColor = this.addColor.bind(this);
@@ -22,7 +22,7 @@ class ClothPicker extends React.Component {
   addColor() {
     const { colors } = this.state;
     colors.push({
-      id: colors.length + 1,
+
       title: `newcolor ${colors.length + 1}`,
     });
     this.setState({
@@ -32,7 +32,7 @@ class ClothPicker extends React.Component {
 
   render() {
     const {
-      setCloth, selectedCloth, index,
+      setCloth, selectedCloth,
     } = this.props;
     const { colors } = this.state;
     return (
@@ -44,7 +44,7 @@ class ClothPicker extends React.Component {
             style={{
               height: 50, width: '100%', backgroundColor: 'grey', alignItems: 'flex-start',
             }}
-            onValueChange={(value) => setCloth(value, index)}
+            onValueChange={(value) => setCloth(value)}
             itemStyle={{ height: 100, width: '100%', backgroundColor: 'grey' }}
           >
             <Picker.Item label="T-shirt" value="tshirt" />
@@ -57,14 +57,16 @@ class ClothPicker extends React.Component {
           horizontal
           data={colors}
           extraData={this.state}
-          keyExtractor={(item, itemIndex) => itemIndex.toString()} // item.id.toString()
+          keyExtractor={(item, itemIndex) => itemIndex.toString()}
           renderItem={({ item }) => (
             <ColorPicker
               selectedColor={item.title}
             />
+
           )}
+          ListFooterComponent={<View style={{ height: 40, width: 60 }}><Button title="Add color" onPress={this.addColor} color="#7a5f15" /></View>}
         />
-        <Button style={{ }} title="Add color" onPress={this.addColor} color="#7a5f15" />
+
         {/* this.addColor a nie addColor() żeby nie wywołało się to przy starcie progarmu */}
       </View>
     );
@@ -73,7 +75,6 @@ class ClothPicker extends React.Component {
 ClothPicker.propTypes = {
   setCloth: PropTypes.func.isRequired,
   selectedCloth: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
 };
 
 export default ClothPicker;
