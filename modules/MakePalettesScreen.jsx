@@ -3,63 +3,15 @@ import {
   View, Text, Button, TextInput, FlatList,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import ClothPicker from './ClothPicker';
+import actions from '../redux/actions';
 
-class MakePalettesScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      clothes: [
-
-      ],
-    };
-    this.setCloth = this.setCloth.bind(this);
-    this.addCloth = this.addCloth.bind(this);
-    this.convertSet = this.convertSet.bind(this);
-    this.addColor = this.addColor.bind(this);
-  }
-
-  setCloth(value, index) {
-    const { clothes } = this.state;
-
-    clothes[index] = { type: value, colors: clothes[index].colors };
-
-    this.setState({
-      clothes,
-    });
-  }
-
-
-  addColor(index) {
-    const { clothes } = this.state;
-    clothes[index].colors.push(`newcolor ${clothes[index].colors.length + 1}`);
-    this.setState({
-      clothes,
-    });
-  }
-
-  addCloth() {
-    const { clothes } = this.state;
-    console.log(clothes === this.state.clothes);
-    console.log(clothes === []);
-    console.log(clothes);
-    clothes.push({
-      type: 'tshirt',
-      colors: [],
-    });
-
-    this.setState({
-      clothes,
-    });
-  }
-
-  convertSet() {
-    console.log(this.state);
-  }
-
+class MakePalettesScreen extends React.PureComponent {
   render() {
-    const { clothes } = this.state;
-    const { navigation } = this.props;
+    const {
+      navigation, dispatch, clothes,
+    } = this.props;
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <View style={{
@@ -75,20 +27,26 @@ class MakePalettesScreen extends React.Component {
         >
           <FlatList
             data={clothes}
-            extraData={this.state}
+            extraData={clothes}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <ClothPicker
-                colors={item.colors}
+                colors={clothes[index].colors}
                 index={index}
-                setCloth={this.setCloth}
                 selectedCloth={item.type}
-                addColor={this.addColor}
               />
             )}
-            ListFooterComponent={<Button title="Add Cloth" onPress={this.addCloth} color="#975f35" />}
+            ListFooterComponent={(
+              <Button
+                title="Add Cloth"
+                onPress={() => dispatch(actions.addCloth({
+                  type: 'tshirt',
+                  colors: [],
+                }))}
+                color="#975f35"
+              />
+            )}
           />
-
         </View>
         <View style={{
           flexDirection: 'row',
@@ -108,6 +66,16 @@ class MakePalettesScreen extends React.Component {
 }
 MakePalettesScreen.propTypes = {
   navigation: PropTypes.shape({ goBack: PropTypes.func.isRequired }).isRequired,
+  dispatch: PropTypes.func.isRequired,
+  clothes: PropTypes.arrayOf(PropTypes.shape()).isRequired,
 };
 
-export default MakePalettesScreen;
+function mapStateToProps(state) {
+  return {
+    clothes: state.clothes,
+    colors: state.clothes.colors,
+
+  };
+}
+
+export default connect(mapStateToProps)(MakePalettesScreen);

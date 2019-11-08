@@ -1,0 +1,7 @@
+export const ADD_CLOTH = 'ADD_CLOTH';
+export const SET_CLOTH = 'SET_CLOTH';
+export const DELETE_CLOTH = 'DELETE_CLOTH';
+
+export const ADD_COLOR = 'ADD_COLOR';
+export const SET_COLOR = 'SET_COLOR';
+export const DELETE_COLOR = 'DELETE_COLOR';
