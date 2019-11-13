@@ -4,13 +4,14 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-community/async-storage';
 import ClothPicker from './ClothPicker';
 import actions from '../redux/actions';
 
 class MakePalettesScreen extends React.PureComponent {
   render() {
     const {
-      navigation, dispatch, currentClothes,
+      navigation, dispatch, currentClothes, outfits,
     } = this.props;
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -61,12 +62,13 @@ class MakePalettesScreen extends React.PureComponent {
           <View style={{ width: 100 }}>
             <Button
               title="Add"
-              onPress={() => dispatch(actions.addOutfit(currentClothes))}
-            />
-            <Button
-              title="see current"
-              onPress={() => {
-              }}
+              onPress={
+                async () => {
+                  const newOutfits = [...outfits, currentClothes];
+                  await AsyncStorage.setItem('outfits', JSON.stringify(newOutfits));
+                  dispatch(actions.setOutfits(newOutfits));
+                }
+              }
             />
           </View>
         </View>
@@ -78,6 +80,7 @@ MakePalettesScreen.propTypes = {
   navigation: PropTypes.shape({ goBack: PropTypes.func.isRequired }).isRequired,
   dispatch: PropTypes.func.isRequired,
   currentClothes: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  outfits: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.shape()).isRequired).isRequired,
 };
 
 function mapStateToProps(state) {

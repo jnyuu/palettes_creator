@@ -44,10 +44,10 @@ class OutfitDisplay extends React.PureComponent {
                 width: '30%', backgroundColor: '#2596EE', alignItems: 'center', alignSelf: 'center', margin: 7,
               }}
               onPress={async () => {
-                const newOutfits = Array.from(outfits);
+                const newOutfits = [...outfits];
                 newOutfits.splice(outfitIndex, 1);
                 await AsyncStorage.setItem('outfits', JSON.stringify(newOutfits));
-                dispatch(actions.removeOutfit(outfitIndex));
+                dispatch(actions.setOutfits(newOutfits));
               }}
             >
               <Text style={{ color: 'white' }}>Remove Outfit</Text>

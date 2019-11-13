@@ -11,27 +11,13 @@ export default (state = initialState, action) => {
       return {
         ...state,
         outfits: action.outfits,
-      };
-    case types.ADD_OUTFIT: {
-      return {
-        ...state,
-        outfits: [...state.outfits, action.newOutfit],
         currentClothes: [],
       };
-    }
 
     case types.EDIT_OUTFIT:
       return {
 
       };
-    case types.REMOVE_OUTFIT: {
-      const newOutfits = Array.from(state.outfits);
-      newOutfits.splice(action.index, 1);
-      return {
-        ...state,
-        outfits: newOutfits,
-      };
-    }
 
 
     case types.ADD_CLOTH: {
@@ -40,7 +26,6 @@ export default (state = initialState, action) => {
         currentClothes: [...state.currentClothes, action.cloth],
       };
     }
-
     case types.SET_CLOTH: {
       const newClothes = Array.from(state.currentClothes);
       newClothes[action.index].type = action.value;

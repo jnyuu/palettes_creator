@@ -1,6 +1,5 @@
 export const ADD_OUTFIT = 'ADD_OUTFIT';
 export const EDIT_OUTFIT = 'EDIT_OUTFIT';
-export const REMOVE_OUTFIT = 'REMOVE_OUTFIT';
 export const SET_OUTFITS = 'SET_OUTFITS';
 
 export const ADD_CLOTH = 'ADD_CLOTH';

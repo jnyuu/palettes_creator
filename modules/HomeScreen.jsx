@@ -29,7 +29,6 @@ HomeScreen.propTypes = {
   navigation: PropTypes.shape({ navigate: PropTypes.func.isRequired }).isRequired,
 };
 
-
 function mapStateToProps(state) {
   return {
     outfits: state.outfits,
