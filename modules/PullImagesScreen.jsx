@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 class PullImagesScreen extends React.PureComponent {
   render() {
     const { navigation } = this.props;
-
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Pull Images Screen</Text>
@@ -14,8 +13,10 @@ class PullImagesScreen extends React.PureComponent {
     );
   }
 }
+
 PullImagesScreen.propTypes = {
   navigation: PropTypes.shape({ goBack: PropTypes.func.isRequired }).isRequired,
 
 };
+
 export default PullImagesScreen;

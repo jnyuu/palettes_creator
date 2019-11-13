@@ -1,5 +1,22 @@
 import * as types from './types';
 
+const setOutfits = (outfits) => ({
+  type: types.SET_OUTFITS,
+  outfits,
+});
+const addOutfit = (newOutfit) => ({
+  type: types.ADD_OUTFIT,
+  newOutfit,
+});
+const editOutfit = () => ({
+  type: types.EDIT_OUTFIT,
+});
+const removeOutfit = (index) => ({
+  type: types.REMOVE_OUTFIT,
+  index,
+});
+
+
 const addCloth = (cloth) => ({
   type: types.ADD_CLOTH,
   cloth,
@@ -31,5 +48,14 @@ const deleteColor = (index) => ({
 });
 
 export default {
-  addCloth, addColor, setCloth, deleteCloth, setColor, deleteColor,
+  addCloth,
+  addColor,
+  setCloth,
+  deleteCloth,
+  setColor,
+  deleteColor,
+  setOutfits,
+  addOutfit,
+  editOutfit,
+  removeOutfit,
 };

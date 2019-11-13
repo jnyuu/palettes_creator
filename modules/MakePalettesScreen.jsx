@@ -10,7 +10,7 @@ import actions from '../redux/actions';
 class MakePalettesScreen extends React.PureComponent {
   render() {
     const {
-      navigation, dispatch, clothes,
+      navigation, dispatch, currentClothes,
     } = this.props;
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -26,12 +26,12 @@ class MakePalettesScreen extends React.PureComponent {
         }}
         >
           <FlatList
-            data={clothes}
-            extraData={clothes}
+            data={currentClothes}
+            extraData={currentClothes}
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item, index }) => (
               <ClothPicker
-                colors={clothes[index].colors}
+                colors={currentClothes[index].colors}
                 index={index}
                 selectedCloth={item.type}
               />
@@ -58,7 +58,17 @@ class MakePalettesScreen extends React.PureComponent {
         }}
         >
           <View style={{ width: 100 }}><Button title="Go Back" onPress={() => navigation.goBack()} /></View>
-          <View style={{ width: 100 }}><Button title="Add" onPress={this.convertSet} /></View>
+          <View style={{ width: 100 }}>
+            <Button
+              title="Add"
+              onPress={() => dispatch(actions.addOutfit(currentClothes))}
+            />
+            <Button
+              title="see current"
+              onPress={() => {
+              }}
+            />
+          </View>
         </View>
       </View>
     );
@@ -67,14 +77,13 @@ class MakePalettesScreen extends React.PureComponent {
 MakePalettesScreen.propTypes = {
   navigation: PropTypes.shape({ goBack: PropTypes.func.isRequired }).isRequired,
   dispatch: PropTypes.func.isRequired,
-  clothes: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  currentClothes: PropTypes.arrayOf(PropTypes.shape()).isRequired,
 };
 
 function mapStateToProps(state) {
   return {
-    clothes: state.clothes,
-    colors: state.clothes.colors,
-
+    currentClothes: state.currentClothes,
+    outfits: state.outfits,
   };
 }
 

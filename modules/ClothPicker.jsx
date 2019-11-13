@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Picker, View, FlatList, Button,
+  Picker, View, FlatList, Button, TouchableOpacity, Text,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -13,8 +13,26 @@ class ClothPicker extends React.PureComponent {
       selectedCloth, index, colors, dispatch,
     } = this.props;
     return (
-      <View style={{ flexDirection: 'row', width: '100%' }}>
+      <View style={{
+        overflow: 'visible',
+        flexDirection: 'row',
+        width: '100%',
+        position: 'relative',
+      }}
+      >
+        <TouchableOpacity
+          onPress={() => dispatch(actions.deleteCloth(index))}
+          activeOpacity={0.6}
+          style={{
+            position: 'absolute', bottom: '16%', left: 80, overflow: 'visible', zIndex: 2, color: 'red',
+          }}
+        >
+          <Text style={{ color: 'red', fontSize: 25 }}>
+            X
+          </Text>
+        </TouchableOpacity>
         <View style={{ width: '36%' }}>
+
           <Picker
             selectedValue={selectedCloth}
             mode="dialog"
@@ -23,12 +41,14 @@ class ClothPicker extends React.PureComponent {
             }}// (value) => setCloth(value, index)
             onValueChange={(value) => dispatch(actions.setCloth(value, index))}
             itemStyle={{ height: 100, width: '100%', backgroundColor: 'grey' }}
+            pickerTextEllipsisLen={6}
           >
             <Picker.Item label="T-shirt" value="tshirt" />
             <Picker.Item label="Skirt" value="skirt" />
             <Picker.Item label="Pants" value="pants" />
             <Picker.Item label="Shoes" value="shoes" />
           </Picker>
+
         </View>
         <FlatList
           horizontal
@@ -65,7 +85,7 @@ ClothPicker.propTypes = {
 
 function mapStateToProps(state) {
   return {
-    clothes: state.clothes,
+    currentClothes: state.currentClothes,
   };
 }
 

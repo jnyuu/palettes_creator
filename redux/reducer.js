@@ -1,38 +1,70 @@
 import * as types from './types';
 
 const initialState = {
-  clothes: [
-
-  ],
+  currentClothes: [],
+  outfits: [],
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case types.ADD_CLOTH:
+    case types.SET_OUTFITS:
       return {
         ...state,
-        clothes: [...state.clothes, action.cloth],
+        outfits: action.outfits,
       };
+    case types.ADD_OUTFIT: {
+      return {
+        ...state,
+        outfits: [...state.outfits, action.newOutfit],
+        currentClothes: [],
+      };
+    }
+
+    case types.EDIT_OUTFIT:
+      return {
+
+      };
+    case types.REMOVE_OUTFIT: {
+      const newOutfits = Array.from(state.outfits);
+      newOutfits.splice(action.index, 1);
+      return {
+        ...state,
+        outfits: newOutfits,
+      };
+    }
+
+
+    case types.ADD_CLOTH: {
+      return {
+        ...state,
+        currentClothes: [...state.currentClothes, action.cloth],
+      };
+    }
+
     case types.SET_CLOTH: {
-      const newClothes = Array.from(state.clothes);
+      const newClothes = Array.from(state.currentClothes);
       newClothes[action.index].type = action.value;
       return {
         ...state,
-        clothes: newClothes,
+        currentClothes: newClothes,
       };
     }
-    case types.DELETE_CLOTH:
+    case types.DELETE_CLOTH: {
+      const newClothes = Array.from(state.currentClothes);
+      newClothes.splice(action.index, 1);
       return {
-        state,
+        ...state,
+        currentClothes: newClothes,
       };
+    }
 
 
     case types.ADD_COLOR: {
-      const newClothes = Array.from(state.clothes);
-      newClothes[action.index].colors.push(action.value);
+      const newClothes = Array.from(state.currentClothes);
+      newClothes[action.index].colors.push(action.color);
       return {
         ...state,
-        clothes: newClothes,
+        currentClothes: newClothes,
       }; }
     case types.SET_COLOR:
       return {
