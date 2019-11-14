@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Text, View, FlatList, TouchableOpacity,
+  Text, View, FlatList, TouchableOpacity, Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import PropTypes from 'prop-types';
@@ -10,13 +10,19 @@ import actions from '../redux/actions';
 class OutfitDisplay extends React.PureComponent {
   render() {
     const {
-      outfit, outfitIndex, dispatch, outfits,
+      outfit, outfitIndex, dispatch, outfits, navigateToMakePalettes,
     } = this.props;
+
     return (
-      <View>
+      <View style={{ borderWidth: 1, marginTop: 5 }}>
+        <Image
+          source={{
+            uri: outfit.image,
+          }}
+          style={{ width: 200, height: 200, alignSelf: 'center' }}
+        />
         <FlatList
-          style={{ borderWidth: 1, marginTop: 5 }}
-          data={outfit}
+          data={outfit.clothes}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item: cloth }) => (
             <View style={{ flexDirection: 'row' }}>
@@ -39,19 +45,32 @@ class OutfitDisplay extends React.PureComponent {
             </View>
           )}
           ListFooterComponent={(
-            <TouchableOpacity
-              style={{
-                width: '30%', backgroundColor: '#2596EE', alignItems: 'center', alignSelf: 'center', margin: 7,
-              }}
-              onPress={async () => {
-                const newOutfits = [...outfits];
-                newOutfits.splice(outfitIndex, 1);
-                await AsyncStorage.setItem('outfits', JSON.stringify(newOutfits));
-                dispatch(actions.setOutfits(newOutfits));
-              }}
-            >
-              <Text style={{ color: 'white' }}>Remove Outfit</Text>
-            </TouchableOpacity>
+            <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+              <TouchableOpacity
+                style={{
+                  width: '30%', backgroundColor: '#2596EE', alignItems: 'center', alignSelf: 'flex-end', margin: 7,
+                }}
+                onPress={async () => {
+                  const newOutfits = [...outfits];
+                  newOutfits.splice(outfitIndex, 1);
+                  await AsyncStorage.setItem('outfits', JSON.stringify(newOutfits));
+                  dispatch(actions.setOutfits(newOutfits));
+                }}
+              >
+                <Text style={{ color: 'white' }}>Remove Outfit</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  width: '30%', backgroundColor: '#2596EE', alignItems: 'center', alignSelf: 'flex-start', margin: 7,
+                }}
+                onPress={() => {
+                  dispatch(actions.setEditingIndex(outfitIndex));
+                  navigateToMakePalettes();
+                }}
+              >
+                <Text style={{ color: 'white' }}>Edit Outfit</Text>
+              </TouchableOpacity>
+            </View>
           )}
         />
       </View>
@@ -60,16 +79,18 @@ class OutfitDisplay extends React.PureComponent {
 }
 
 OutfitDisplay.propTypes = {
-  outfit: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
+  outfit: PropTypes.shape().isRequired,
   outfitIndex: PropTypes.number.isRequired,
   dispatch: PropTypes.func.isRequired,
-  outfits: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.shape()).isRequired).isRequired,
+  outfits: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
+  navigateToMakePalettes: PropTypes.func.isRequired,
 };
 
 function mapStateToProps(state) {
   return {
     currentClothes: state.currentClothes,
     outfits: state.outfits,
+    isEditing: state.isEditing,
   };
 }
 

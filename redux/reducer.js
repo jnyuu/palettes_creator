@@ -3,6 +3,8 @@ import * as types from './types';
 const initialState = {
   currentClothes: [],
   outfits: [],
+  editingIndex: null,
+  currImage: null,
 };
 
 export default (state = initialState, action) => {
@@ -12,12 +14,16 @@ export default (state = initialState, action) => {
         ...state,
         outfits: action.outfits,
         currentClothes: [],
+        currImage: null,
       };
-
-    case types.EDIT_OUTFIT:
+    case types.SET_EDITING_INDEX: {
       return {
-
+        ...state,
+        currentClothes: state.outfits[action.editedOutfitIndex].clothes,
+        editingIndex: action.editedOutfitIndex,
+        currImage: state.outfits[action.editedOutfitIndex].image,
       };
+    }
 
 
     case types.ADD_CLOTH: {
@@ -59,6 +65,27 @@ export default (state = initialState, action) => {
       return {
         state,
       };
+
+
+    case types.TOGGLE_EDITING: {
+      let editing;
+      if (state.editingIndex !== null) {
+        editing = null;
+      } else {
+        editing = state.editingIndex;
+      }
+      return {
+        ...state,
+        editingIndex: editing,
+      }; }
+
+    case types.SET_IMAGE: {
+      return {
+        ...state,
+        currImage: action.image,
+      };
+    }
+
     default:
       return state;
   }

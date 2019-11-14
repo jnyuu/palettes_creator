@@ -21,6 +21,7 @@ class ViewPalettesScreen extends React.PureComponent {
             <OutfitDisplay
               outfit={item}
               outfitIndex={index}
+              navigateToMakePalettes={() => navigation.navigate('MakePalettes')}
             />
           )}
         />
@@ -30,8 +31,11 @@ class ViewPalettesScreen extends React.PureComponent {
 }
 
 ViewPalettesScreen.propTypes = {
-  navigation: PropTypes.shape({ goBack: PropTypes.func.isRequired }).isRequired,
-  outfits: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.shape()).isRequired).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+    goBack: PropTypes.func.isRequired,
+  }).isRequired,
+  outfits: PropTypes.arrayOf(PropTypes.shape().isRequired).isRequired,
 };
 
 function mapStateToProps(state) {

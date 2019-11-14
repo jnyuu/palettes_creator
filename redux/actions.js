@@ -4,16 +4,9 @@ const setOutfits = (outfits) => ({
   type: types.SET_OUTFITS,
   outfits,
 });
-const addOutfit = (newOutfit) => ({
-  type: types.ADD_OUTFIT,
-  newOutfit,
-});
-const editOutfit = () => ({
-  type: types.EDIT_OUTFIT,
-});
-const removeOutfit = (index) => ({
-  type: types.REMOVE_OUTFIT,
-  index,
+const setEditingIndex = (editedOutfitIndex) => ({
+  type: types.SET_EDITING_INDEX,
+  editedOutfitIndex,
 });
 
 
@@ -47,6 +40,15 @@ const deleteColor = (index) => ({
   index,
 });
 
+
+const toggleEditing = () => ({
+  type: types.TOGGLE_EDITING,
+});
+
+const setImage = (image) => ({
+  type: types.SET_IMAGE,
+  image,
+});
 export default {
   addCloth,
   addColor,
@@ -55,7 +57,7 @@ export default {
   setColor,
   deleteColor,
   setOutfits,
-  addOutfit,
-  editOutfit,
-  removeOutfit,
+  setEditingIndex,
+  toggleEditing,
+  setImage,
 };
