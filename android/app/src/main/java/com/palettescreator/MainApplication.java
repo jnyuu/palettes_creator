@@ -1,6 +1,5 @@
 package com.palettescreator;
-
-import com.imagepicker.ImagePickerPackage; 
+ 
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;

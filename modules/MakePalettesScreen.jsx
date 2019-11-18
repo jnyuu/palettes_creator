@@ -4,12 +4,16 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import bmp from 'bmp-js';
+import { Buffer } from 'buffer';
 import AsyncStorage from '@react-native-community/async-storage';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-picker';
+import * as RNFS from 'react-native-fs';
 import ClothPicker from './ClothPicker';
 import actions from '../redux/actions';
-import penis from '../outfit.json';
+
+global.Buffer = Buffer;
 
 const options = {
   title: 'Select Image',
@@ -48,13 +52,20 @@ const getImageSize = async (uri) => {
 const imgContainerSize = 300;
 
 class MakePalettesScreen extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = { pickerColor: '' };
+  }
+
   render() {
     const {
       navigation, dispatch, currentClothes, outfits, editingIndex, currImage,
     } = this.props;
+    const { pickerColor } = this.state;
 
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ width: 100, height: 100, backgroundColor: pickerColor }} />
         <View style={{
           backgroundColor: '#34a1fa', width: imgContainerSize, height: imgContainerSize, marginTop: 5, alignItems: 'center', justifyContent: 'center',
         }}
@@ -63,9 +74,6 @@ class MakePalettesScreen extends React.PureComponent {
             style={{ width: '100%', height: '100%' }}
             onTouchStart={async (e) => {
               if (currImage !== null) {
-                console.log('touchMove', e.nativeEvent);
-                console.log(penis[1][1]);
-                console.log(currImage);
                 const { locationX: touchX, locationY: touchY } = e.nativeEvent;
                 const { width: imgWidth, height: imgHeight } = await getImageSize(currImage);
                 const vertical = imgHeight > imgWidth;
@@ -77,21 +85,33 @@ class MakePalettesScreen extends React.PureComponent {
                 }
                 const trueWidth = Math.floor(imgWidth * ratio);
                 const trueHeight = Math.floor(imgHeight * ratio);
-                console.log('height', trueHeight);
-                console.log('width', trueWidth);
-                console.log('touchX: ', touchX);
-                if (touchX < (imgContainerSize - trueWidth) / 2
-                  || touchX > (imgContainerSize + trueWidth) / 2
-                  || touchY < (imgContainerSize - trueHeight) / 2
-                  || touchY > (imgContainerSize + trueHeight) / 2) {
-                  console.log('PIZDA');
-                } else {
+                if (touchX > (imgContainerSize - trueWidth) / 2
+                    && touchX < (imgContainerSize + trueWidth) / 2
+                  && touchY > (imgContainerSize - trueHeight) / 2
+                  && touchY < (imgContainerSize + trueHeight) / 2) {
                   const trueXDistance = touchX - (imgContainerSize - trueWidth) / 2;
                   const trueYDistance = touchY - (imgContainerSize - trueHeight) / 2;
                   const imageX = Math.floor(trueXDistance / ratio);
                   const imageY = Math.floor(trueYDistance / ratio);
-                  console.log(imageX, imageY);
-                  console.log(penis[imageY][imageX]);
+
+                  const imageBytes = await RNFS.readFile(currImage, 'base64');
+                  const buf = Buffer.from(imageBytes, 'base64');
+                  const decoded = bmp.decode(buf);
+                  const { data: pixels } = decoded;
+
+                  const colors = [];
+                  for (let i = 0; i < pixels.length; i += 4) {
+                    colors.push(pixels.slice(i, i + 4));
+                  }
+
+                  const rows = [];
+                  for (let i = 0; i < colors.length; i += imgWidth) {
+                    rows.push(colors.slice(i, i + imgWidth));
+                  }
+
+                  const abgr = rows[imageY][imageX];
+                  const rgb = `rgb(${abgr[3]}, ${abgr[2]}, ${abgr[1]})`;
+                  this.setState({ pickerColor: rgb });
                 }
               }
             }}
@@ -105,8 +125,9 @@ class MakePalettesScreen extends React.PureComponent {
                   await checkAndroidPermission();
                 }
                 ImagePicker.showImagePicker(options, (response) => {
-                  if (response.didCancel || response.error || response.customButton) {
-                  } else { dispatch(actions.setImage(response.uri)); }
+                  if (!response.didCancel && !response.error && !response.customButton) {
+                    dispatch(actions.setImage(response.uri));
+                  }
                 });
               }}
             >
