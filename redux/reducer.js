@@ -5,6 +5,7 @@ const initialState = {
   outfits: [],
   editingIndex: null,
   currImage: null,
+  currColor: null,
 };
 
 export default (state = initialState, action) => {

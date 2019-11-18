@@ -9,6 +9,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import ImagePicker from 'react-native-image-picker';
 import ClothPicker from './ClothPicker';
 import actions from '../redux/actions';
+import penis from '../outfit.json';
 
 const options = {
   title: 'Select Image',
@@ -28,6 +29,23 @@ const checkAndroidPermission = async () => {
   }
 };
 
+const getImageSize = async (uri) => {
+  const success = (resolve) => (width, height) => {
+    resolve({
+      width,
+      height,
+    });
+  };
+  const error = (reject) => (failure) => {
+    reject(failure);
+  };
+
+  return new Promise((resolve, reject) => {
+    Image.getSize(uri, success(resolve), error(reject));
+  });
+};
+
+const imgContainerSize = 300;
 
 class MakePalettesScreen extends React.PureComponent {
   render() {
@@ -38,19 +56,57 @@ class MakePalettesScreen extends React.PureComponent {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <View style={{
-          flex: 3, backgroundColor: '#34a1fa', width: '80%', marginTop: 5, alignItems: 'center', justifyContent: 'center',
+          backgroundColor: '#34a1fa', width: imgContainerSize, height: imgContainerSize, marginTop: 5, alignItems: 'center', justifyContent: 'center',
         }}
         >
-
-          <View>
+          <View
+            style={{ width: '100%', height: '100%' }}
+            onTouchStart={async (e) => {
+              if (currImage !== null) {
+                console.log('touchMove', e.nativeEvent);
+                console.log(penis[1][1]);
+                console.log(currImage);
+                const { locationX: touchX, locationY: touchY } = e.nativeEvent;
+                const { width: imgWidth, height: imgHeight } = await getImageSize(currImage);
+                const vertical = imgHeight > imgWidth;
+                let ratio;
+                if (vertical) {
+                  ratio = imgContainerSize / imgHeight;
+                } else {
+                  ratio = imgContainerSize / imgWidth;
+                }
+                const trueWidth = Math.floor(imgWidth * ratio);
+                const trueHeight = Math.floor(imgHeight * ratio);
+                console.log('height', trueHeight);
+                console.log('width', trueWidth);
+                console.log('touchX: ', touchX);
+                if (touchX < (imgContainerSize - trueWidth) / 2
+                  || touchX > (imgContainerSize + trueWidth) / 2
+                  || touchY < (imgContainerSize - trueHeight) / 2
+                  || touchY > (imgContainerSize + trueHeight) / 2) {
+                  console.log('PIZDA');
+                } else {
+                  const trueXDistance = touchX - (imgContainerSize - trueWidth) / 2;
+                  const trueYDistance = touchY - (imgContainerSize - trueHeight) / 2;
+                  const imageX = Math.floor(trueXDistance / ratio);
+                  const imageY = Math.floor(trueYDistance / ratio);
+                  console.log(imageX, imageY);
+                  console.log(penis[imageY][imageX]);
+                }
+              }
+            }}
+          >
             <TouchableOpacity
+              style={{
+                width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center',
+              }}
               onPress={async () => {
                 if (Platform.OS === 'android') {
                   await checkAndroidPermission();
                 }
-
                 ImagePicker.showImagePicker(options, (response) => {
-                  dispatch(actions.setImage(response.uri));
+                  if (response.didCancel || response.error || response.customButton) {
+                  } else { dispatch(actions.setImage(response.uri)); }
                 });
               }}
             >
@@ -59,13 +115,12 @@ class MakePalettesScreen extends React.PureComponent {
                   source={{
                     uri: currImage,
                   }}
-                  style={{ width: 200, height: 200 }}
+                  style={{ width: '100%', height: '100%' }}
+                  resizeMode="contain"
                 />
-              ) : (<Text>Add Image</Text>)}
-
-
+              )
+                : (<Text>Add Image</Text>)}
             </TouchableOpacity>
-
           </View>
         </View>
         <TextInput placeholder="Type here" style={{}} />
