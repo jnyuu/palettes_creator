@@ -19,7 +19,9 @@ class OutfitDisplay extends React.PureComponent {
           source={{
             uri: outfit.image,
           }}
-          style={{ width: 200, height: 200, alignSelf: 'center' }}
+          style={{
+            width: 200, height: 200, alignSelf: 'center', resizeMode: 'contain',
+          }}
         />
         <FlatList
           data={outfit.clothes}

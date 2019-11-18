@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   View, Text, Button, TextInput, FlatList, PermissionsAndroid, Platform, Image,
+  BackHandler,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -12,6 +13,7 @@ import ImagePicker from 'react-native-image-picker';
 import * as RNFS from 'react-native-fs';
 import ClothPicker from './ClothPicker';
 import actions from '../redux/actions';
+
 
 global.Buffer = Buffer;
 
@@ -56,6 +58,27 @@ class MakePalettesScreen extends React.PureComponent {
     super(props);
     this.state = { pickerColor: '' };
   }
+
+  componentDidMount() {
+    const {
+      navigation, dispatch, editingIndex,
+    } = this.props;
+
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', async () => {
+      dispatch(actions.clearCurrentClothes(null));
+      if (editingIndex !== null) {
+        dispatch(actions.toggleEditing());
+        navigation.goBack();
+      } else {
+        navigation.goBack();
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
 
   render() {
     const {
@@ -183,8 +206,9 @@ class MakePalettesScreen extends React.PureComponent {
         >
           <View style={{ width: 100 }}>
             <Button
-              title="Go Back"
-              onPress={() => {
+              title="Fuck Go Back"
+              onPress={async () => {
+                dispatch(actions.clearCurrentClothes());
                 if (editingIndex !== null) {
                   dispatch(actions.toggleEditing());
                   navigation.goBack();
@@ -192,6 +216,7 @@ class MakePalettesScreen extends React.PureComponent {
                   navigation.goBack();
                 }
               }}
+
             />
           </View>
           <View style={{ width: 100 }}>
@@ -220,7 +245,7 @@ class MakePalettesScreen extends React.PureComponent {
                 async () => {
                   const outfit = {
                     image: currImage,
-                    clothes: currentClothes,
+                    clothes: currentClothes.slice(0),
                   };
                   const newOutfits = [...outfits, outfit];
                   await AsyncStorage.setItem('outfits', JSON.stringify(newOutfits));
@@ -235,6 +260,8 @@ class MakePalettesScreen extends React.PureComponent {
     );
   }
 }
+
+
 MakePalettesScreen.propTypes = {
   navigation: PropTypes.shape({ goBack: PropTypes.func.isRequired }).isRequired,
   dispatch: PropTypes.func.isRequired,

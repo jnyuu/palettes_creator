@@ -1,5 +1,6 @@
 export const SET_EDITING_INDEX = 'SET_EDITING_INDEX';
 export const SET_OUTFITS = 'SET_OUTFITS';
+export const CLEAR_CURRENT_CLOTHES = 'CLEAR_CURRENT_CLOTHES';
 
 export const ADD_CLOTH = 'ADD_CLOTH';
 export const SET_CLOTH = 'SET_CLOTH';

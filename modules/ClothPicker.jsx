@@ -48,12 +48,10 @@ class ClothPicker extends React.PureComponent {
             <Picker.Item label="Pants" value="pants" />
             <Picker.Item label="Shoes" value="shoes" />
           </Picker>
-
         </View>
         <FlatList
           horizontal
           data={colors}
-          extraData={this.state}
           keyExtractor={(item, itemIndex) => itemIndex.toString()}
           renderItem={({ item }) => (
             <ColorPicker
@@ -64,7 +62,9 @@ class ClothPicker extends React.PureComponent {
             <View style={{ height: 40, width: 60 }}>
               <Button
                 title="Add color"
-                onPress={() => dispatch(actions.addColor('new Color', index))}
+                onPress={() => {
+                  dispatch(actions.addColor('new Color', index));
+                }}
                 color="#7a5f15"
               />
             </View>
@@ -86,6 +86,7 @@ ClothPicker.propTypes = {
 function mapStateToProps(state) {
   return {
     currentClothes: state.currentClothes,
+    outfits: state.outfits,
   };
 }
 

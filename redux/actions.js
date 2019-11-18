@@ -8,6 +8,10 @@ const setEditingIndex = (editedOutfitIndex) => ({
   type: types.SET_EDITING_INDEX,
   editedOutfitIndex,
 });
+const clearCurrentClothes = () => ({
+  type: types.CLEAR_CURRENT_CLOTHES,
+
+});
 
 
 const addCloth = (cloth) => ({
@@ -60,4 +64,5 @@ export default {
   setEditingIndex,
   toggleEditing,
   setImage,
+  clearCurrentClothes,
 };

@@ -10,22 +10,28 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case types.SET_OUTFITS:
+    case types.SET_OUTFITS: {
       return {
         ...state,
         outfits: action.outfits,
         currentClothes: [],
         currImage: null,
-      };
+      }; }
+
     case types.SET_EDITING_INDEX: {
       return {
         ...state,
-        currentClothes: state.outfits[action.editedOutfitIndex].clothes,
+        currentClothes: state.outfits.slice(0)[action.editedOutfitIndex].clothes.slice(0),
         editingIndex: action.editedOutfitIndex,
         currImage: state.outfits[action.editedOutfitIndex].image,
       };
     }
-
+    case types.CLEAR_CURRENT_CLOTHES:
+      return {
+        ...state,
+        currentClothes: [],
+        currImage: null,
+      };
 
     case types.ADD_CLOTH: {
       return {
@@ -34,7 +40,7 @@ export default (state = initialState, action) => {
       };
     }
     case types.SET_CLOTH: {
-      const newClothes = Array.from(state.currentClothes);
+      const newClothes = state.currentClothes.slice(0);
       newClothes[action.index].type = action.value;
       return {
         ...state,
@@ -42,7 +48,7 @@ export default (state = initialState, action) => {
       };
     }
     case types.DELETE_CLOTH: {
-      const newClothes = Array.from(state.currentClothes);
+      const newClothes = state.currentClothes.slice(0);
       newClothes.splice(action.index, 1);
       return {
         ...state,
@@ -52,12 +58,17 @@ export default (state = initialState, action) => {
 
 
     case types.ADD_COLOR: {
-      const newClothes = Array.from(state.currentClothes);
-      newClothes[action.index].colors.push(action.color);
+      const newClothes = state.currentClothes.slice(0);
+      newClothes[action.index] = { ...newClothes[action.index] };
+      newClothes[action.index].colors = [
+        ...state.currentClothes[action.index].colors,
+        action.color,
+      ];
       return {
         ...state,
         currentClothes: newClothes,
-      }; }
+      };
+    }
     case types.SET_COLOR:
       return {
         state,
