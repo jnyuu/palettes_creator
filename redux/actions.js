@@ -34,14 +34,16 @@ const addColor = (color, index) => ({
   color,
   index,
 });
-const setColor = (value, index) => ({
+const setColor = (clothIndex, colorIndex, value) => ({
   type: types.SET_COLOR,
+  clothIndex,
+  colorIndex,
   value,
-  index,
 });
-const deleteColor = (index) => ({
+const deleteColor = (clothIndex, colorIndex) => ({
   type: types.DELETE_COLOR,
-  index,
+  clothIndex,
+  colorIndex,
 });
 
 

@@ -31,6 +31,7 @@ export default (state = initialState, action) => {
         ...state,
         currentClothes: [],
         currImage: null,
+        currColor: null,
       };
 
     case types.ADD_CLOTH: {
@@ -67,16 +68,23 @@ export default (state = initialState, action) => {
       return {
         ...state,
         currentClothes: newClothes,
+        currColor: 'black',
       };
     }
     case types.SET_COLOR:
       return {
         state,
       };
-    case types.DELETE_COLOR:
+    case types.DELETE_COLOR: {
+      const newClothes = state.currentClothes.slice(0);
+      newClothes[action.clothIndex] = { ...newClothes[action.clothIndex] };
+      newClothes[action.clothIndex].colors = [...newClothes[action.clothIndex].colors];
+      newClothes[action.clothIndex].colors.splice(action.colorIndex, 1);
       return {
-        state,
+        ...state,
+        currentClothes: newClothes,
       };
+    }
 
 
     case types.TOGGLE_EDITING: {

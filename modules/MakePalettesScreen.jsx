@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Text, Button, TextInput, FlatList, PermissionsAndroid, Platform, Image,
+  View, Button, Image,
   BackHandler,
 } from 'react-native';
 import PropTypes from 'prop-types';
@@ -8,32 +8,32 @@ import { connect } from 'react-redux';
 import bmp from 'bmp-js';
 import { Buffer } from 'buffer';
 import AsyncStorage from '@react-native-community/async-storage';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import ImagePicker from 'react-native-image-picker';
+// import { TouchableOpacity } from 'react-native-gesture-handler';
+// import ImagePicker from 'react-native-image-picker';
 import * as RNFS from 'react-native-fs';
-import ClothPicker from './ClothPicker';
+import ClothesList from './ClothesList';
 import actions from '../redux/actions';
-
+import ImagePickerButton from './ImagePickerButton';
 
 global.Buffer = Buffer;
 
-const options = {
-  title: 'Select Image',
-  storageOptions: {
-    skipBackup: true,
-    path: 'images',
-  },
-};
+// const options = {
+//   title: 'Select Image',
+//   storageOptions: {
+//     skipBackup: true,
+//     path: 'images',
+//   },
+// };
 
-const checkAndroidPermission = async () => {
-  try {
-    const permission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
-    await PermissionsAndroid.request(permission);
-    Promise.resolve();
-  } catch (error) {
-    Promise.reject(error);
-  }
-};
+// const checkAndroidPermission = async () => {
+//   try {
+//     const permission = PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+//     await PermissionsAndroid.request(permission);
+//     Promise.resolve();
+//   } catch (error) {
+//     Promise.reject(error);
+//   }
+// };
 
 const getImageSize = async (uri) => {
   const success = (resolve) => (width, height) => {
@@ -53,11 +53,13 @@ const getImageSize = async (uri) => {
 
 const imgContainerSize = 300;
 
+
 class MakePalettesScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = { pickerColor: '' };
   }
+
 
   componentDidMount() {
     const {
@@ -79,151 +81,126 @@ class MakePalettesScreen extends React.PureComponent {
     this.backHandler.remove();
   }
 
+   readPixel = async (e) => {
+     const { currImage } = this.props;
+     if (currImage !== null) {
+       const { locationX: touchX, locationY: touchY } = e.nativeEvent;
+       const { width: imgWidth, height: imgHeight } = await getImageSize(currImage);
+       const vertical = imgHeight > imgWidth;
+       let ratio;
+       if (vertical) {
+         ratio = imgContainerSize / imgHeight;
+       } else {
+         ratio = imgContainerSize / imgWidth;
+       }
+       const trueWidth = Math.floor(imgWidth * ratio);
+       const trueHeight = Math.floor(imgHeight * ratio);
+       if (touchX > (imgContainerSize - trueWidth) / 2
+         && touchX < (imgContainerSize + trueWidth) / 2
+       && touchY > (imgContainerSize - trueHeight) / 2
+       && touchY < (imgContainerSize + trueHeight) / 2) {
+         const trueXDistance = touchX - (imgContainerSize - trueWidth) / 2;
+         const trueYDistance = touchY - (imgContainerSize - trueHeight) / 2;
+         const imageX = Math.floor(trueXDistance / ratio);
+         const imageY = Math.floor(trueYDistance / ratio);
 
-  render() {
-    const {
-      navigation, dispatch, currentClothes, outfits, editingIndex, currImage,
-    } = this.props;
-    const { pickerColor } = this.state;
+         const imageBytes = await RNFS.readFile(currImage, 'base64');
+         const buf = Buffer.from(imageBytes, 'base64');
+         const decoded = bmp.decode(buf);
+         const { data: pixels } = decoded;
 
-    return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <View style={{ width: 100, height: 100, backgroundColor: pickerColor }} />
-        <View style={{
-          backgroundColor: '#34a1fa', width: imgContainerSize, height: imgContainerSize, marginTop: 5, alignItems: 'center', justifyContent: 'center',
-        }}
-        >
-          <View
-            style={{ width: '100%', height: '100%' }}
-            onTouchStart={async (e) => {
-              if (currImage !== null) {
-                const { locationX: touchX, locationY: touchY } = e.nativeEvent;
-                const { width: imgWidth, height: imgHeight } = await getImageSize(currImage);
-                const vertical = imgHeight > imgWidth;
-                let ratio;
-                if (vertical) {
-                  ratio = imgContainerSize / imgHeight;
-                } else {
-                  ratio = imgContainerSize / imgWidth;
-                }
-                const trueWidth = Math.floor(imgWidth * ratio);
-                const trueHeight = Math.floor(imgHeight * ratio);
-                if (touchX > (imgContainerSize - trueWidth) / 2
-                    && touchX < (imgContainerSize + trueWidth) / 2
-                  && touchY > (imgContainerSize - trueHeight) / 2
-                  && touchY < (imgContainerSize + trueHeight) / 2) {
-                  const trueXDistance = touchX - (imgContainerSize - trueWidth) / 2;
-                  const trueYDistance = touchY - (imgContainerSize - trueHeight) / 2;
-                  const imageX = Math.floor(trueXDistance / ratio);
-                  const imageY = Math.floor(trueYDistance / ratio);
+         const colors = [];
+         for (let i = 0; i < pixels.length; i += 4) {
+           colors.push(pixels.slice(i, i + 4));
+         }
+         const rows = [];
+         for (let i = 0; i < colors.length; i += imgWidth) {
+           rows.push(colors.slice(i, i + imgWidth));
+         }
+         const abgr = rows[imageY][imageX];
+         const rgb = `rgb(${abgr[3]}, ${abgr[2]}, ${abgr[1]})`;
+         this.setState({ pickerColor: rgb });
+       }
+     }
+   };
+   // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+   // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                  const imageBytes = await RNFS.readFile(currImage, 'base64');
-                  const buf = Buffer.from(imageBytes, 'base64');
-                  const decoded = bmp.decode(buf);
-                  const { data: pixels } = decoded;
+   render() {
+     const {
+       navigation, dispatch, currentClothes, outfits, editingIndex, currImage, currColor,
+     } = this.props;
+     const { pickerColor } = this.state;
+     return (
+       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+         <View style={{ width: 20, height: 20, backgroundColor: pickerColor }} />
+         <View style={{
+           backgroundColor: '#34a1fa', width: imgContainerSize, height: imgContainerSize, marginTop: 5, alignItems: 'center', justifyContent: 'center',
+         }}
+         >
+           <View
+             style={{ width: '100%', height: '100%' }}
+             onTouchStart={(e) => this.readPixel(e)}
+           >
+             {currImage === null ? (
+               <ImagePickerButton
+                 buttonText="Add Image"
+                 style={{
+                   width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center',
+                 }}
+               />
+             ) : (
+               <Image
+                 source={{
+                   uri: currImage,
+                 }}
+                 style={{ width: '100%', height: '100%' }}
+                 resizeMode="contain"
+               />
+             )}
 
-                  const colors = [];
-                  for (let i = 0; i < pixels.length; i += 4) {
-                    colors.push(pixels.slice(i, i + 4));
-                  }
+           </View>
+         </View>
+         {currImage === null ? (<View />) : (
+           <ImagePickerButton
+             buttonText="Change Image"
+             style={{
+               justifyContent: 'center', alignItems: 'center', height: 30, backgroundColor: '#2596EE', padding: 3, margin: 3,
+             }}
+           />
+         )}
 
-                  const rows = [];
-                  for (let i = 0; i < colors.length; i += imgWidth) {
-                    rows.push(colors.slice(i, i + imgWidth));
-                  }
+         <ClothesList />
 
-                  const abgr = rows[imageY][imageX];
-                  const rgb = `rgb(${abgr[3]}, ${abgr[2]}, ${abgr[1]})`;
-                  this.setState({ pickerColor: rgb });
-                }
-              }
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center',
-              }}
-              onPress={async () => {
-                if (Platform.OS === 'android') {
-                  await checkAndroidPermission();
-                }
-                ImagePicker.showImagePicker(options, (response) => {
-                  if (!response.didCancel && !response.error && !response.customButton) {
-                    dispatch(actions.setImage(response.uri));
-                  }
-                });
-              }}
-            >
-              {currImage !== null ? (
-                <Image
-                  source={{
-                    uri: currImage,
-                  }}
-                  style={{ width: '100%', height: '100%' }}
-                  resizeMode="contain"
-                />
-              )
-                : (<Text>Add Image</Text>)}
-            </TouchableOpacity>
-          </View>
-        </View>
-        <TextInput placeholder="Type here" style={{}} />
-        <View style={{
-          flex: 1.4, backgroundColor: '#34a1fa', width: '80%', marginTop: 1,
-        }}
-        >
-          <FlatList
-            data={currentClothes}
-            extraData={currentClothes}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => (
-              <ClothPicker
-                colors={currentClothes[index].colors}
-                index={index}
-                selectedCloth={item.type}
-              />
-            )}
-            ListFooterComponent={(
-              <Button
-                title="Add Cloth"
-                onPress={() => dispatch(actions.addCloth({
-                  type: 'tshirt',
-                  colors: [],
-                }))}
-                color="#975f35"
-              />
-            )}
-          />
-        </View>
-        <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          width: '80%',
-          marginTop: 15,
-          marginBottom: 5,
-        }}
-        >
-          <View style={{ width: 100 }}>
-            <Button
-              title="Fuck Go Back"
-              onPress={async () => {
-                dispatch(actions.clearCurrentClothes());
-                if (editingIndex !== null) {
-                  dispatch(actions.toggleEditing());
-                  navigation.goBack();
-                } else {
-                  navigation.goBack();
-                }
-              }}
-
-            />
-          </View>
-          <View style={{ width: 100 }}>
-            {editingIndex !== null ? (
-              <Button
-                title="Save"
-                onPress={
+         <View style={{
+           flexDirection: 'row',
+           alignItems: 'center',
+           justifyContent: 'space-between',
+           width: '80%',
+           marginTop: 15,
+           marginBottom: 5,
+         }}
+         >
+           <View style={{ width: 100 }}>
+             <Button
+               title="Fuck Go Back"
+               onPress={async () => {
+                 dispatch(actions.clearCurrentClothes());
+                 if (editingIndex !== null) {
+                   dispatch(actions.toggleEditing());
+                   navigation.goBack();
+                 } else {
+                   navigation.goBack();
+                 }
+               }}
+             />
+           </View>
+           <View style={{ width: 100 }}>
+             {editingIndex !== null ? (
+               <Button
+                 title="Save"
+                 onPress={
                 async () => {
                   const outfit = {
                     image: currImage,
@@ -237,11 +214,11 @@ class MakePalettesScreen extends React.PureComponent {
                   navigation.goBack();
                 }
               }
-              />
-            ) : (
-              <Button
-                title="Add"
-                onPress={
+               />
+             ) : (
+               <Button
+                 title="Add"
+                 onPress={
                 async () => {
                   const outfit = {
                     image: currImage,
@@ -252,15 +229,16 @@ class MakePalettesScreen extends React.PureComponent {
                   dispatch(actions.setOutfits(newOutfits));
                 }
               }
-              />
-            )}
-          </View>
-        </View>
-      </View>
-    );
-  }
-}
+               />
+             )}
+           </View>
+         </View>
 
+
+       </View>
+     );
+   }
+}
 
 MakePalettesScreen.propTypes = {
   navigation: PropTypes.shape({ goBack: PropTypes.func.isRequired }).isRequired,
@@ -283,6 +261,7 @@ function mapStateToProps(state) {
     outfits: state.outfits,
     editingIndex: state.editingIndex,
     currImage: state.currImage,
+    currColor: state.currColor,
   };
 }
 

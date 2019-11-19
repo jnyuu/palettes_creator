@@ -24,7 +24,7 @@ class ClothPicker extends React.PureComponent {
           onPress={() => dispatch(actions.deleteCloth(index))}
           activeOpacity={0.6}
           style={{
-            position: 'absolute', bottom: '16%', left: 80, overflow: 'visible', zIndex: 2, color: 'red',
+            position: 'absolute', bottom: '16%', left: 80, zIndex: 2,
           }}
         >
           <Text style={{ color: 'red', fontSize: 25 }}>
@@ -32,7 +32,6 @@ class ClothPicker extends React.PureComponent {
           </Text>
         </TouchableOpacity>
         <View style={{ width: '36%' }}>
-
           <Picker
             selectedValue={selectedCloth}
             mode="dialog"
@@ -53,9 +52,11 @@ class ClothPicker extends React.PureComponent {
           horizontal
           data={colors}
           keyExtractor={(item, itemIndex) => itemIndex.toString()}
-          renderItem={({ item }) => (
+          renderItem={({ item, index: colorIndex }) => (
             <ColorPicker
               selectedColor={item}
+              colorIndex={colorIndex}
+              clothIndex={index}
             />
           )}
           ListFooterComponent={(
