@@ -64,7 +64,7 @@ class ClothPicker extends React.PureComponent {
               <Button
                 title="Add color"
                 onPress={() => {
-                  dispatch(actions.addColor('new Color', index));
+                  dispatch(actions.addColor(index));
                 }}
                 color="#7a5f15"
               />
@@ -80,8 +80,8 @@ class ClothPicker extends React.PureComponent {
 ClothPicker.propTypes = {
   selectedCloth: PropTypes.string.isRequired,
   index: PropTypes.number.isRequired,
-  colors: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
   dispatch: PropTypes.func.isRequired,
+  colors: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
 };
 
 function mapStateToProps(state) {

@@ -5,7 +5,6 @@ import {
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ImagePicker from 'react-native-image-picker';
-import ClothPicker from './ClothPicker';
 import actions from '../redux/actions';
 
 const options = {
@@ -40,7 +39,7 @@ class ImagePickerButton extends React.PureComponent {
           }
           ImagePicker.showImagePicker(options, (response) => {
             if (!response.didCancel && !response.error && !response.customButton) {
-              dispatch(actions.setImage(`file:///${response.path}`));// response.uri
+              dispatch(actions.setImage(`file:///${response.path}`));
             }
           });
         }}
@@ -52,6 +51,15 @@ class ImagePickerButton extends React.PureComponent {
   }
 }
 
+ImagePickerButton.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  buttonText: PropTypes.string.isRequired,
+  style: PropTypes.PropTypes.oneOfType([PropTypes.shape(), PropTypes.arrayOf(PropTypes.shape())]),
+};
+
+ImagePickerButton.defaultProps = {
+  style: {},
+};
 
 function mapStateToProps(state) {
   return {

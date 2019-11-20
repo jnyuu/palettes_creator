@@ -10,13 +10,13 @@ import actions from '../redux/actions';
 class ColorPicker extends React.PureComponent {
   render() {
     const {
-      selectedColor, currColor, currentClothes, colorIndex, dispatch, clothIndex,
+      currentClothes, colorIndex, dispatch, clothIndex,
     } = this.props;
     return (
       <View style={{
         height: 50,
         width: 50,
-        backgroundColor: currColor,
+        backgroundColor: currentClothes[clothIndex].colors[colorIndex],
         position: 'relative',
         borderColor: 'black',
         borderWidth: 1,
@@ -44,9 +44,7 @@ class ColorPicker extends React.PureComponent {
             </Text>
           </TouchableOpacity>
         </View>
-
         <TouchableOpacity
-
           style={{
             height: 50, width: 50, justifyContent: 'center',
           }}
@@ -57,9 +55,12 @@ class ColorPicker extends React.PureComponent {
     );
   }
 }
+
 ColorPicker.propTypes = {
-  selectedColor: PropTypes.string.isRequired,
   dispatch: PropTypes.func.isRequired,
+  currentClothes: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  colorIndex: PropTypes.number.isRequired,
+  clothIndex: PropTypes.number.isRequired,
 
 };
 

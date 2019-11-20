@@ -12,6 +12,9 @@ const clearCurrentClothes = () => ({
   type: types.CLEAR_CURRENT_CLOTHES,
 
 });
+const clearSelectedColors = () => ({
+  type: types.CLEAR_SELECTED_COLORS,
+});
 
 
 const addCloth = (cloth) => ({
@@ -29,10 +32,13 @@ const deleteCloth = (index) => ({
 });
 
 
-const addColor = (color, index) => ({
+const addColor = (index) => ({
   type: types.ADD_COLOR,
-  color,
   index,
+});
+const setCurrentColor = (value) => ({
+  type: types.SET_CURRENT_COLOR,
+  value,
 });
 const setColor = (clothIndex, colorIndex, value) => ({
   type: types.SET_COLOR,
@@ -55,6 +61,8 @@ const setImage = (image) => ({
   type: types.SET_IMAGE,
   image,
 });
+
+
 export default {
   addCloth,
   addColor,
@@ -67,4 +75,6 @@ export default {
   toggleEditing,
   setImage,
   clearCurrentClothes,
+  setCurrentColor,
+  clearSelectedColors,
 };

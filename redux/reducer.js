@@ -1,6 +1,7 @@
 import * as types from './types';
 
 const initialState = {
+  selectingColor: [],
   currentClothes: [],
   outfits: [],
   editingIndex: null,
@@ -32,6 +33,13 @@ export default (state = initialState, action) => {
         currentClothes: [],
         currImage: null,
         currColor: null,
+        selectingColor: [],
+      };
+    case types.CLEAR_SELECTED_COLORS:
+      return {
+        ...state,
+        currColor: null,
+        selectingColor: [],
       };
 
     case types.ADD_CLOTH: {
@@ -63,18 +71,31 @@ export default (state = initialState, action) => {
       newClothes[action.index] = { ...newClothes[action.index] };
       newClothes[action.index].colors = [
         ...state.currentClothes[action.index].colors,
-        action.color,
+        null,
       ];
       return {
         ...state,
         currentClothes: newClothes,
-        currColor: 'black',
+        currColor: 'rgb(0, 0, 0)',
+        selectingColor: [action.index, newClothes[action.index].colors.length - 1],
       };
     }
-    case types.SET_COLOR:
+    case types.SET_COLOR: {
+      const newClothes = state.currentClothes.slice(0);
+      newClothes[action.clothIndex] = { ...newClothes[action.clothIndex] };
+      newClothes[action.clothIndex].colors[action.colorIndex] = action.value;
       return {
-        state,
+        ...state,
+        currentClothes: newClothes,
+        currColor: null,
       };
+    }
+    case types.SET_CURRENT_COLOR: {
+      return {
+        ...state,
+        currColor: action.value,
+      };
+    }
     case types.DELETE_COLOR: {
       const newClothes = state.currentClothes.slice(0);
       newClothes[action.clothIndex] = { ...newClothes[action.clothIndex] };
