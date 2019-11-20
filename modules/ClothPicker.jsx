@@ -1,9 +1,10 @@
 import React from 'react';
 import {
-  Picker, View, FlatList, Button, TouchableOpacity, Text,
+  Picker, View, FlatList, TouchableOpacity, Text, TouchableNativeFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { Icon } from 'react-native-elements';
 import actions from '../redux/actions';
 import ColorPicker from './ColorPicker';
 
@@ -24,22 +25,24 @@ class ClothPicker extends React.PureComponent {
           onPress={() => dispatch(actions.deleteCloth(index))}
           activeOpacity={0.6}
           style={{
-            position: 'absolute', bottom: '16%', left: 80, zIndex: 2,
+            position: 'absolute', bottom: 16, left: 80, zIndex: 2,
           }}
         >
-          <Text style={{ color: 'red', fontSize: 25 }}>
-            X
-          </Text>
+          <Icon
+            name="closecircle"
+            type="antdesign"
+            color="#F0433E"
+          />
         </TouchableOpacity>
         <View style={{ width: '36%' }}>
           <Picker
             selectedValue={selectedCloth}
             mode="dialog"
             style={{
-              height: 50, width: '100%', backgroundColor: 'grey', alignItems: 'flex-start',
+              height: 50, width: '100%', backgroundColor: '#0A5FA1', alignItems: 'flex-start', margin: 4, color: 'white',
             }}// (value) => setCloth(value, index)
             onValueChange={(value) => dispatch(actions.setCloth(value, index))}
-            itemStyle={{ height: 100, width: '100%', backgroundColor: 'grey' }}
+            itemStyle={{ height: 100, width: '100%' }}
             pickerTextEllipsisLen={6}
           >
             <Picker.Item label="T-shirt" value="tshirt" />
@@ -60,15 +63,33 @@ class ClothPicker extends React.PureComponent {
             />
           )}
           ListFooterComponent={(
-            <View style={{ height: 40, width: 60 }}>
-              <Button
-                title="Add color"
-                onPress={() => {
-                  dispatch(actions.addColor(index));
+            <TouchableNativeFeedback
+              onPress={() => {
+                dispatch(actions.addColor(index));
+              }}
+            >
+              <View
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 50,
+                  width: 50,
+                  backgroundColor: '#B7BA0B',
+                  margin: 4,
+                  marginLeft: 8,
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 2,
+                  },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                  elevation: 34,
                 }}
-                color="#7a5f15"
-              />
-            </View>
+              >
+                <Text style={{ color: 'white', fontSize: 30 }}>+</Text>
+              </View>
+            </TouchableNativeFeedback>
           )}
         />
         {/* this.addColor a nie addColor() żeby nie wywołało się to przy starcie progarmu */}

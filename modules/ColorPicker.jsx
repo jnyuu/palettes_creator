@@ -1,10 +1,11 @@
 import React from 'react';
 import {
-  Text, View,
+  View,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Icon } from 'react-native-elements';
 import actions from '../redux/actions';
 
 class ColorPicker extends React.PureComponent {
@@ -18,19 +19,14 @@ class ColorPicker extends React.PureComponent {
         width: 50,
         backgroundColor: currentClothes[clothIndex].colors[colorIndex],
         position: 'relative',
-        borderColor: 'black',
-        borderWidth: 1,
+        marginVertical: 4,
+        marginLeft: 8,
       }}
       >
         <View style={{
           position: 'absolute',
-          top: 0,
-          right: 0,
-          width: 20,
-          aspectRatio: 1,
-          backgroundColor: 'white',
-          borderColor: 'black',
-          borderWidth: 1,
+          top: -4,
+          right: -3,
           zIndex: 2,
           justifyContent: 'center',
           alignItems: 'center',
@@ -39,18 +35,20 @@ class ColorPicker extends React.PureComponent {
           <TouchableOpacity
             onPress={() => { dispatch(actions.deleteColor(clothIndex, colorIndex)); }}
           >
-            <Text style={{ color: 'red', lineHeight: 24, fontSize: 20 }}>
-            X
-            </Text>
+            <Icon
+              name="closecircle"
+              type="antdesign"
+              color="#F0433E"
+            />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={{
             height: 50, width: 50, justifyContent: 'center',
           }}
         >
           <Text style={{ textAlign: 'center' }}>choose color</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     );
   }

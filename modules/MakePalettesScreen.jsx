@@ -155,7 +155,7 @@ class MakePalettesScreen extends React.PureComponent {
            >
              <View style={{ width: 100 }}>
                <Button
-                 title="Fuck Go Back"
+                 title="Go Back"
                  onPress={async () => {
                    dispatch(actions.clearCurrentClothes());
                    if (editingIndex !== null) {

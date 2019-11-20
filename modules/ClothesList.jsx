@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  View, Button, FlatList, Text,
+  View, FlatList, Text, TouchableNativeFeedback,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
@@ -25,6 +25,7 @@ class ClothesList extends React.PureComponent {
           : (
             <View>
               <FlatList
+                style={{ elevation: 34, backgroundColor: '#34a1fa' }}
                 data={currentClothes}
                 extraData={currentClothes}
                 keyExtractor={(item, index) => index.toString()}
@@ -36,14 +37,37 @@ class ClothesList extends React.PureComponent {
                   />
                 )}
                 ListFooterComponent={(
-                  <Button
-                    title="Add Cloth"
+                  <TouchableNativeFeedback
                     onPress={() => dispatch(actions.addCloth({
                       type: 'tshirt',
                       colors: [],
                     }))}
-                    color="#975f35"
-                  />
+                  >
+                    <View
+                      style={{
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        height: 35,
+                        backgroundColor: '#B7BA0B',
+                        width: '100%',
+                        shadowColor: '#000',
+                        shadowOffset: {
+                          width: 0,
+                          height: 2,
+                        },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                        elevation: 34,
+                      }}
+                    >
+                      <Text style={{
+                        color: 'white', fontSize: 40, lineHeight: 50,
+                      }}
+                      >
+                      +
+                      </Text>
+                    </View>
+                  </TouchableNativeFeedback>
           )}
               />
             </View>
