@@ -37,11 +37,13 @@ class OutfitDisplay extends React.PureComponent {
                 data={cloth.colors}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={({ item: color }) => (
-                  <View Style={{ width: 100, alignItems: 'flex-start' }}>
-                    <Text>
-                      {color}
-                    </Text>
-                  </View>
+                  <View style={{
+                    width: 30,
+                    height: 30,
+                    backgroundColor: color,
+                    margin: 3,
+                  }}
+                  />
                 )}
               />
             </View>
