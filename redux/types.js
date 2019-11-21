@@ -15,3 +15,4 @@ export const DELETE_COLOR = 'DELETE_COLOR';
 export const TOGGLE_EDITING = 'TOGGLE_EDITING';
 
 export const SET_IMAGE = 'SET_IMAGE';
+export const UPDATE_IMAGE_INFO = 'UPDATE_IMAGE_INFO';

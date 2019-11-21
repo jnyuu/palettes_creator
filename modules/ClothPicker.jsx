@@ -34,12 +34,12 @@ class ClothPicker extends React.PureComponent {
             color="#F0433E"
           />
         </TouchableOpacity>
-        <View style={{ width: '36%' }}>
+        <View style={{ width: '36%', backgroundColor: '#0A5FA1', margin: 4 }}>
           <Picker
             selectedValue={selectedCloth}
             mode="dialog"
             style={{
-              height: 50, width: '100%', backgroundColor: '#0A5FA1', alignItems: 'flex-start', margin: 4, color: 'white',
+              height: 50, width: 1000, alignItems: 'flex-start', color: 'white',
             }}// (value) => setCloth(value, index)
             onValueChange={(value) => dispatch(actions.setCloth(value, index))}
             itemStyle={{ height: 100, width: '100%' }}

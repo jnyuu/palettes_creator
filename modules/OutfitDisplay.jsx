@@ -20,15 +20,19 @@ class OutfitDisplay extends React.PureComponent {
             uri: outfit.image,
           }}
           style={{
-            width: 200, height: 200, alignSelf: 'center', resizeMode: 'contain',
+            width: 200, height: 200, alignSelf: 'center', resizeMode: 'contain', margin: 4,
           }}
         />
         <FlatList
+          style={{}}
           data={outfit.clothes}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item: cloth }) => (
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={{ width: 50 }}>
+            <View style={{ flexDirection: 'row', borderTopWidth: 1, marginHorizontal: 5 }}>
+              <Text style={{
+                marginLeft: 5, width: 50, alignSelf: 'center',
+              }}
+              >
                 {cloth.type}
               </Text>
               <FlatList
@@ -52,7 +56,19 @@ class OutfitDisplay extends React.PureComponent {
             <View style={{ alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
               <TouchableOpacity
                 style={{
-                  width: '30%', backgroundColor: '#2596EE', alignItems: 'center', alignSelf: 'flex-end', margin: 7,
+                  width: '30%',
+                  backgroundColor: '#2596EE',
+                  alignItems: 'center',
+                  alignSelf: 'flex-end',
+                  margin: 7,
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 5,
+                  },
+                  shadowOpacity: 0.34,
+                  shadowRadius: 6.27,
+                  elevation: 20,
                 }}
                 onPress={async () => {
                   const newOutfits = [...outfits];
@@ -65,7 +81,19 @@ class OutfitDisplay extends React.PureComponent {
               </TouchableOpacity>
               <TouchableOpacity
                 style={{
-                  width: '30%', backgroundColor: '#2596EE', alignItems: 'center', alignSelf: 'flex-start', margin: 7,
+                  width: '30%',
+                  backgroundColor: '#2596EE',
+                  alignItems: 'center',
+                  alignSelf: 'flex-start',
+                  margin: 7,
+                  shadowColor: '#000',
+                  shadowOffset: {
+                    width: 0,
+                    height: 5,
+                  },
+                  shadowOpacity: 0.34,
+                  shadowRadius: 6.27,
+                  elevation: 20,
                 }}
                 onPress={() => {
                   dispatch(actions.setEditingIndex(outfitIndex));

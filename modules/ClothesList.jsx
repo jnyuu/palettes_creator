@@ -18,9 +18,17 @@ class ClothesList extends React.PureComponent {
       }}
       >
         {currImage === null ? (
-          <Text style={{ textAlign: 'center', color: 'red', fontSize: 18 }}>
-            Before customizing the outfit you will need to choose an image!
-          </Text>
+          <View style={{
+            alignItems: 'center', justifyContent: 'center', height: '100%', backgroundColor: '#F0433E',
+          }}
+          >
+            <Text style={{
+              textAlign: 'center', color: 'white', fontSize: 24, fontWeight: 'bold', margin: 7,
+            }}
+            >
+            Before customizing an outfit you will need to choose an image!
+            </Text>
+          </View>
         )
           : (
             <View>

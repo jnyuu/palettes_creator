@@ -5,16 +5,18 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import bmp from 'bmp-js';
 import { Buffer } from 'buffer';
 import AsyncStorage from '@react-native-community/async-storage';
 import * as RNFS from 'react-native-fs';
+import bmp from 'bmp-js';
 import ClothesList from './ClothesList';
 import actions from '../redux/actions';
 import ImagePickerButton from './ImagePickerButton';
 
 global.Buffer = Buffer;
 
+
+const imgContainerSize = 300;
 const getImageSize = async (uri) => {
   const success = (resolve) => (width, height) => {
     resolve({
@@ -30,8 +32,6 @@ const getImageSize = async (uri) => {
   });
 };
 
-const imgContainerSize = 300;
-
 class MakePalettesScreen extends React.PureComponent {
   componentDidMount() {
     const {
@@ -46,47 +46,61 @@ class MakePalettesScreen extends React.PureComponent {
         navigation.goBack();
       }
     });
+    this.checkIfEditing();
   }
 
   componentWillUnmount() {
     this.backHandler.remove();
   }
 
+  checkIfEditing = async () => {
+    const {
+      dispatch,
+      editingIndex, currImage,
+    } = this.props;
+    if (editingIndex !== null) {
+      const { width: imgWidth, height: imgHeight } = await getImageSize(currImage);
+      const imageBytes = await RNFS.readFile(currImage, 'base64');
+      const buf = Buffer.from(imageBytes, 'base64');
+      const decoded = bmp.decode(buf);
+      const { data: pixels } = decoded;
+      const colors = [];
+      for (let i = 0; i < pixels.length; i += 4) {
+        colors.push(pixels.slice(i, i + 4));
+      }
+      const rows = [];
+      for (let i = 0; i < colors.length; i += imgWidth) {
+        rows.push(colors.slice(i, i + imgWidth));
+      }
+      const imageInfoData = {
+        imgWidth, imgHeight, rows,
+      };
+      dispatch(actions.updateImageInfo(imageInfoData));
+    }
+  };
+
    readPixel = async (e) => {
-     const { currImage, dispatch } = this.props;
+     const { currImage, dispatch, imageInfo } = this.props;
      if (currImage !== null) {
        const { locationX: touchX, locationY: touchY } = e.nativeEvent;
-       const { width: imgWidth, height: imgHeight } = await getImageSize(currImage);
-       const vertical = imgHeight > imgWidth;
+       const vertical = imageInfo.imgHeight > imageInfo.imgWidth;
        let ratio;
        if (vertical) {
-         ratio = imgContainerSize / imgHeight;
+         ratio = imgContainerSize / imageInfo.imgHeight;
        } else {
-         ratio = imgContainerSize / imgWidth;
+         ratio = imgContainerSize / imageInfo.imgWidth;
        }
-       const trueWidth = Math.floor(imgWidth * ratio);
-       const trueHeight = Math.floor(imgHeight * ratio);
+       const trueWidth = Math.floor(imageInfo.imgWidth * ratio);
+       const trueHeight = Math.floor(imageInfo.imgHeight * ratio);
        if (touchX > (imgContainerSize - trueWidth) / 2
-         && touchX < (imgContainerSize + trueWidth) / 2
+       && touchX < (imgContainerSize + trueWidth) / 2
        && touchY > (imgContainerSize - trueHeight) / 2
        && touchY < (imgContainerSize + trueHeight) / 2) {
          const trueXDistance = touchX - (imgContainerSize - trueWidth) / 2;
          const trueYDistance = touchY - (imgContainerSize - trueHeight) / 2;
          const imageX = Math.floor(trueXDistance / ratio);
          const imageY = Math.floor(trueYDistance / ratio);
-         const imageBytes = await RNFS.readFile(currImage, 'base64');
-         const buf = Buffer.from(imageBytes, 'base64');
-         const decoded = bmp.decode(buf);
-         const { data: pixels } = decoded;
-         const colors = [];
-         for (let i = 0; i < pixels.length; i += 4) {
-           colors.push(pixels.slice(i, i + 4));
-         }
-         const rows = [];
-         for (let i = 0; i < colors.length; i += imgWidth) {
-           rows.push(colors.slice(i, i + imgWidth));
-         }
-         const abgr = rows[imageY][imageX];
+         const abgr = imageInfo.rows[imageY][imageX];
          const rgb = `rgb(${abgr[3]}, ${abgr[2]}, ${abgr[1]})`;
          dispatch(actions.setCurrentColor(rgb));
        }
@@ -136,7 +150,6 @@ class MakePalettesScreen extends React.PureComponent {
              }}
            />
          ) : (<View />)}
-
          {currColor === null ? (<ClothesList />) : (
            <View style={{
              flex: 1.4, backgroundColor: currColor, width: '80%', marginTop: 1, marginBottom: 4,
@@ -223,8 +236,6 @@ class MakePalettesScreen extends React.PureComponent {
              />
            </View>
          )}
-
-
        </View>
      );
    }
@@ -239,12 +250,14 @@ MakePalettesScreen.propTypes = {
   currImage: PropTypes.string,
   currColor: PropTypes.string,
   selectingColor: PropTypes.arrayOf(PropTypes.number.isRequired).isRequired,
+  imageInfo: PropTypes.shape(),
 };
 
 MakePalettesScreen.defaultProps = {
   editingIndex: null,
   currImage: null,
   currColor: null,
+  imageInfo: {},
 };
 
 function mapStateToProps(state) {
@@ -254,6 +267,7 @@ function mapStateToProps(state) {
     editingIndex: state.editingIndex,
     currImage: state.currImage,
     currColor: state.currColor,
+    imageInfo: state.imageInfo,
     selectingColor: state.selectingColor,
   };
 }

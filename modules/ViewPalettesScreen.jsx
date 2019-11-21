@@ -15,6 +15,7 @@ class ViewPalettesScreen extends React.PureComponent {
         <Text>View Palettes Screen</Text>
         <Button title="Go to Home Screen" onPress={() => navigation.goBack()} />
         <FlatList
+          style={{ width: '90%' }}
           data={outfits}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (

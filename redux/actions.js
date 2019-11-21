@@ -61,6 +61,10 @@ const setImage = (image) => ({
   type: types.SET_IMAGE,
   image,
 });
+const updateImageInfo = (imageInfo) => ({
+  type: types.UPDATE_IMAGE_INFO,
+  imageInfo,
+});
 
 
 export default {
@@ -77,4 +81,5 @@ export default {
   clearCurrentClothes,
   setCurrentColor,
   clearSelectedColors,
+  updateImageInfo,
 };

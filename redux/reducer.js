@@ -6,6 +6,7 @@ const initialState = {
   outfits: [],
   editingIndex: null,
   currImage: null,
+  imageInfo: { },
   currColor: null,
 };
 
@@ -34,6 +35,7 @@ export default (state = initialState, action) => {
         currImage: null,
         currColor: null,
         selectingColor: [],
+        imageInfo: {},
       };
     case types.CLEAR_SELECTED_COLORS:
       return {
@@ -124,6 +126,12 @@ export default (state = initialState, action) => {
       return {
         ...state,
         currImage: action.image,
+      };
+    }
+    case types.UPDATE_IMAGE_INFO: {
+      return {
+        ...state,
+        imageInfo: action.imageInfo,
       };
     }
 
